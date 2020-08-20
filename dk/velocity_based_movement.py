@@ -11,48 +11,49 @@ from pymavlink import mavutil
 
 def connectMyCopter():
 
-	parser = argparse.ArgumentParser(description='commands')
-	parser.add_argument('--connect')
-	args = parser.parse_args()
+#	parser = argparse.ArgumentParser(description='commands')
+#	parser.add_argument('--connect')
+#	args = parser.parse_args()
 
-	connection_string = args.connect
+#	connection_string = args.connect
 
-	if not connection_string:
-		import dronekit_sitl
-		sitl = dronekit_sitl.start_default()
-		connection_string = sitl.connection_string()
-
-	vehicle = connect(connection_string,wait_ready=True)
+#	if not connection_string:
+#		import dronekit_sitl
+#		sitl = dronekit_sitl.start_default()
+#		connection_string = sitl.connection_string()
+        vehicle = connect('127.0.0.1:14551', wait_ready=True)
+#        vehicle = connect('/dev/ttyTHS2', wait_ready=True, baud=921600)
+#	vehicle = connect(connection_string,wait_ready=True)
 
 	return vehicle
 
 def arm_and_takeoff(targetHeight):
-	while vehicle.is_armable!=True:
-		print("Waiting for vehicle to become armable.")
-		time.sleep(1)
-	print("Vehicle is now armable")
+	#while vehicle.is_armable!=True:
+	#	print("Waiting for vehicle to become armable.")
+	#	time.sleep(1)
+	#print("Vehicle is now armable")
 
-	vehicle.mode = VehicleMode("GUIDED")
+	#vehicle.mode = VehicleMode("GUIDED")
 
 	while vehicle.mode!='GUIDED':
 		print("Waiting for drone to enter GUIDED flight mode")
 		time.sleep(1)
 	print("Vehicle now in GUIDED MODE. Have fun!!")
 
-	vehicle.armed = True
+	#vehicle.armed = True
 	while vehicle.armed==False:
 		print("Waiting for vehicle to become armed.")
 		time.sleep(1)
 	print("Look out! Virtual props are spinning!!")
 
-	vehicle.simple_takeoff(targetHeight) ##meters
+	#vehicle.simple_takeoff(targetHeight) ##meters
 
-	while True:
-		print("Current Altitude: %d"%vehicle.location.global_relative_frame.alt)
-		if vehicle.location.global_relative_frame.alt>=.95*targetHeight:
-			break
-		time.sleep(1)
-	print("Target altitude reached!!")
+	#while True:
+	#	print("Current Altitude: %d"%vehicle.location.global_relative_frame.alt)
+	#	if vehicle.location.global_relative_frame.alt>=.95*targetHeight:
+	#		break
+	#	time.sleep(1)
+	#print("Target altitude reached!!")
 
 	return None
 
@@ -87,29 +88,44 @@ def send_global_ned_velocity(vx, vy, vz):
 ##########MAIN EXECUTABLE###########
 
 vehicle = connectMyCopter()
-arm_and_takeoff(10)
+arm_and_takeoff(0.5)
 time.sleep(2)
 
 counter=0
-while counter<5:
-	send_local_ned_velocity(5,0,0)
+while counter<2:
+	send_local_ned_velocity(0.2,0,0)
 	time.sleep(1)
-	print("Moving NORTH relative to front of drone")
+	print("Moving Forward to front of drone")
 	counter=counter+1
 
 time.sleep(2)
 
 counter=0
-while counter<5:
-	send_local_ned_velocity(0,-5,0)
+while counter<2:
+	send_local_ned_velocity(0,-0.2,0)
 	time.sleep(1)
-	print("Moving WEST relative to front of drone")
+	print("Moving Left to front of drone")
 	counter=counter+1
 
+counter=0
+while counter<2:
+	send_local_ned_velocity(-0.2,0,0)
+	time.sleep(1)
+	print("Moving Back to front of drone")
+	counter=counter+1
 
 time.sleep(2)
 
-while counter<5:
+counter=0
+while counter<2:
+	send_local_ned_velocity(0,0.2,0)
+	time.sleep(1)
+	print("Moving Right to front of drone")
+	counter=counter+1
+
+time.sleep(2)
+
+while counter<2:
 	send_global_ned_velocity(5,0,0)
 	time.sleep(1)
 	print("Moving TRUE NORTH relative to front of drone")
@@ -117,8 +133,8 @@ while counter<5:
 
 time.sleep(2)
 
-counter=0
-while counter<5:
+#counter=0
+while counter<2:
 	send_global_ned_velocity(0,-5,0)
 	time.sleep(1)
 	print("Moving TRUE WEST relative to front of drone")
@@ -127,7 +143,7 @@ while counter<5:
 #########UP AND DOWN############
 time.sleep(2)
 
-counter=0
+#counter=0
 while counter<5:
 	send_local_ned_velocity(0,0,-5)
 	time.sleep(1)
@@ -136,10 +152,9 @@ while counter<5:
 
 time.sleep(2)
 
-counter=0
+#counter=0
 while counter<5:
 	send_local_ned_velocity(0,0,5)
 	time.sleep(1)
 	print("Moving DOWN")
 	counter=counter+1
-
