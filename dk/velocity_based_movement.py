@@ -125,36 +125,36 @@ while counter<2:
 
 time.sleep(2)
 
-while counter<2:
-	send_global_ned_velocity(5,0,0)
-	time.sleep(1)
-	print("Moving TRUE NORTH relative to front of drone")
-	counter=counter+1
-
-time.sleep(2)
-
-#counter=0
-while counter<2:
-	send_global_ned_velocity(0,-5,0)
-	time.sleep(1)
-	print("Moving TRUE WEST relative to front of drone")
-	counter=counter+1
+# while counter<2:
+# 	send_global_ned_velocity(5,0,0)
+# 	time.sleep(1)
+# 	print("Moving TRUE NORTH relative to front of drone")
+# 	counter=counter+1
+#
+# time.sleep(2)
+#
+# #counter=0
+# while counter<2:
+# 	send_global_ned_velocity(0,-5,0)
+# 	time.sleep(1)
+# 	print("Moving TRUE WEST relative to front of drone")
+# 	counter=counter+1
 
 #########UP AND DOWN############
-time.sleep(2)
+# time.sleep(2)
 
 #counter=0
-while counter<5:
-	send_local_ned_velocity(0,0,-5)
-	time.sleep(1)
-	print("Moving UP")
-	counter=counter+1
-
-time.sleep(2)
+# while counter<5:
+# 	send_local_ned_velocity(0,0,-5)
+# 	time.sleep(1)
+# 	print("Moving UP")
+# 	counter=counter+1
+#
+# time.sleep(2)
 
 #counter=0
-while counter<5:
-	send_local_ned_velocity(0,0,5)
-	time.sleep(1)
-	print("Moving DOWN")
-	counter=counter+1
+# while counter<5:
+# 	send_local_ned_velocity(0,0,5)
+# 	time.sleep(1)
+# 	print("Moving DOWN")
+# 	counter=counter+1
