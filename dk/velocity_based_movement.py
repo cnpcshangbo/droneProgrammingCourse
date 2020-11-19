@@ -3,8 +3,12 @@
 from dronekit import connect, VehicleMode,LocationGlobalRelative,APIException
 import time
 import socket
-import exceptions
-import math
+# import exceptions
+try:
+        import exceptions
+except ImportError:
+        import builtins as exceptions
+        import math
 import argparse
 from pymavlink import mavutil
 #########FUNCTIONS#################
@@ -25,7 +29,7 @@ def connectMyCopter():
 #        vehicle = connect('/dev/ttyTHS2', wait_ready=True, baud=921600)
 #	vehicle = connect(connection_string,wait_ready=True)
 
-	return vehicle
+        return vehicle
 
 def arm_and_takeoff(targetHeight):
 	#while vehicle.is_armable!=True:
