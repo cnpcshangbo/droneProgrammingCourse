@@ -3,6 +3,7 @@
 from dronekit import connect, VehicleMode,LocationGlobalRelative,APIException
 import time
 import socket
+import sys
 # import exceptions
 try:
         import exceptions
@@ -41,7 +42,7 @@ def arm_and_takeoff(targetHeight):
 
 	while vehicle.mode!='GUIDED':
 		print("Waiting for drone to enter GUIDED flight mode")
-		time.sleep(1)
+		# time.sleep(1)
 	print("Vehicle now in GUIDED MODE. Have fun!!")
 
 	#vehicle.armed = True
@@ -90,44 +91,82 @@ def send_global_ned_velocity(vx, vy, vz):
 	vehicle.flush()
 
 ##########MAIN EXECUTABLE###########
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Connect the socket to the port where the server is listening
+server_address = ('localhost', 10000)
+print('connecting to {} port {}'.format(*server_address))
+sock.connect(server_address)
+
+# # Send data
+# message = b'TCP client connected.'
+# print('sending {!r}'.format(message))
+# sock.sendall(message)
 
 vehicle = connectMyCopter()
 arm_and_takeoff(0.5)
 time.sleep(2)
 
-counter=0
-while counter<2:
-	send_local_ned_velocity(0.2,0,0)
-	time.sleep(1)
-	print("Moving Forward to front of drone")
-	counter=counter+1
+try:
 
-time.sleep(2)
+    while True:
+        sock.sendall(b'Next data.')
 
-counter=0
-while counter<2:
-	send_local_ned_velocity(0,-0.2,0)
-	time.sleep(1)
-	print("Moving Left to front of drone")
-	counter=counter+1
+        data = sock.recv(2)
+        print('received: ' + str(int.from_bytes(data,"big")))
+        center_error = int.from_bytes(data,"big") - 320
+        print('center_error = ', str(center_error))
+        if center_error > 1:
+            send_local_ned_velocity(0,-1,0)
+            # time.sleep(1)
+            print("Moving Left to front of drone")
 
-counter=0
-while counter<2:
-	send_local_ned_velocity(-0.2,0,0)
-	time.sleep(1)
-	print("Moving Back to front of drone")
-	counter=counter+1
+        elif center_error < -1:
+            send_local_ned_velocity(0,1,0)                      
+            # time.sleep(1)
+            print("Moving Right to front of drone") 
+        else:
+            send_local_ned_velocity(0,0,0)
+            print("Drone is under girder.")
+finally:
+    print('closing socket')
+    sock.close
 
-time.sleep(2)
 
-counter=0
-while counter<2:
-	send_local_ned_velocity(0,0.2,0)
-	time.sleep(1)
-	print("Moving Right to front of drone")
-	counter=counter+1
+# counter=0
+# while counter<2:
+# 	send_local_ned_velocity(0.2,0,0)
+# 	time.sleep(1)
+# 	print("Moving Forward to front of drone")
+# 	counter=counter+1
+# 
+# time.sleep(2)
 
-time.sleep(2)
+# counter=0
+# while counter<2:
+# 	send_local_ned_velocity(0,-0.2,0)
+# 	time.sleep(1)
+# 	print("Moving Left to front of drone")
+# 	counter=counter+1
+
+# counter=0
+# while counter<2:
+# 	send_local_ned_velocity(-0.2,0,0)
+# 	time.sleep(1)
+# 	print("Moving Back to front of drone")
+# 	counter=counter+1
+# 
+# time.sleep(2)
+
+# counter=0
+# while counter<2:
+# 	send_local_ned_velocity(0,0.2,0)
+# 	time.sleep(1)
+# 	print("Moving Right to front of drone")
+# 	counter=counter+1
+
+# time.sleep(2)
 
 # while counter<2:
 # 	send_global_ned_velocity(5,0,0)
