@@ -3,13 +3,16 @@
 from dronekit import connect, VehicleMode,LocationGlobalRelative,APIException
 import time
 import socket
+
 import sys
+
 # import exceptions
 try:
-        import exceptions
+            import exceptions
 except ImportError:
-        import builtins as exceptions
-        import math
+            import builtins as exceptions
+import math
+
 import argparse
 from pymavlink import mavutil
 #########FUNCTIONS#################
