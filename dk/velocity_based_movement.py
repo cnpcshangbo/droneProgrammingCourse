@@ -100,7 +100,11 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port where the server is listening
 server_address = ('localhost', 10000)
 print('connecting to {} port {}'.format(*server_address))
+sock.settimeout(10.0)
+# sock = socket.create_connection(server_address, timeout=1000)
+time.sleep(10)
 sock.connect(server_address)
+# sock.setdefaulttimeout(None)
 
 # # Send data
 # message = b'TCP client connected.'
