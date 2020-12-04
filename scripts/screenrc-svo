@@ -1,0 +1,39 @@
+# the following two lines give a two-line status, with the current window highlighted
+hardstatus alwayslastline
+hardstatus string '%{= kG}[%{G}%H%? %1`%?%{g}][%{w}%l%{g}][%= %{= kw}%-w%{+b yk} %n*%t%?(%u)%? %{-}%+w %=%{g}][%{B}%m/%d %{W}%C%A%{g}]'
+
+# huge scrollback buffer
+defscrollback 5000
+
+# no welcome message
+startup_message off
+
+# 256 colors
+attrcolor b ".I"
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+defbce on
+
+# mouse tracking allows to switch region focus by clicking
+mousetrack on
+
+split
+split -v
+focus down
+split -v
+
+screen -t MAVPROXY /bin/bash t1mavproxy.bash
+screen -t Detection bash launchGirderDetectionModule.sh svo
+screen -t DroneKit bash launchDroneKitModule.sh
+screen -t recordmyscreen bash t4recordmyscreen.bash
+screen -t deploy4 /usr/bin/ssh
+
+focus up
+focus left
+select 0
+focus right
+select 1
+focus left
+focus down
+select 2
+focus right
+select 3
