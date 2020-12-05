@@ -124,15 +124,23 @@ try:
         print('received: ' + str(int.from_bytes(data,"big")))
         center_error = int.from_bytes(data,"big") - 320
         print('center_error = ', str(center_error))
-        if center_error > 1:
-            send_local_ned_velocity(0,-1,0)
+        if center_error > 15:
+            vel_setpoint = -center_error/150
+            if vel_setpoint < -0.2:
+                vel_setpoint = -0.2
+            send_local_ned_velocity(0,vel_setpoint,0)
+            # -0.2<vel_setpoint<-0.1
             # time.sleep(1)
-            print("Moving Left to front of drone")
+            print("Moving Left to front of drone, vel_set="+str(vel_setpoint))
 
-        elif center_error < -1:
-            send_local_ned_velocity(0,1,0)                      
+        elif center_error < -15:
+            vel_setpoint = -center_error/150
+            if vel_setpoint > 0.2:
+                vel_setpoint = 0.2   
+            send_local_ned_velocity(0,vel_setpoint,0)
+            # 0.1 < vel_setpoint < 0.2
             # time.sleep(1)
-            print("Moving Right to front of drone") 
+            print("Moving Right to front of drone, velocity_set = " + str(vel_setpoint)) 
         else:
             send_local_ned_velocity(0,0,0)
             print("Drone is under girder.")
