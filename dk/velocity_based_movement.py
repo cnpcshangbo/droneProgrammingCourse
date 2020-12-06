@@ -115,6 +115,13 @@ vehicle = connectMyCopter()
 arm_and_takeoff(0.5)
 time.sleep(2)
 
+# write log file
+log_gname='BoTest%s.txt' % (time.time())
+gf = open(log_gname, mode='w')
+gf.write("Guided velocity mode log DATA %s\n"%str(time.localtime()))
+gf.write("time\t err\t vel_set\t roll\t pitch\n") #coeffx\t coeffy\t
+gf.close
+
 try:
 
     while True:
@@ -142,8 +149,15 @@ try:
             # time.sleep(1)
             print("Moving Right to front of drone, velocity_set = " + str(vel_setpoint)) 
         else:
+            vel_setpoint = 0
             send_local_ned_velocity(0,0,0)
             print("Drone is under girder.")
+        # write log file
+        roll_origin = vehicle.attitude.roll
+        pitch_origin = vehicle.attitude.pitch 
+        gf = open(log_gname, mode='a')
+        gf.write("%f\t%f\t%f\t%f\t%f\n"%(time.time(),center_error,vel_setpoint,roll_origin,pitch_origin))
+        gf.close()
 finally:
     print('closing socket')
     sock.close
