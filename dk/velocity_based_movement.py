@@ -125,16 +125,43 @@ gf.close
 
 # Controller parameters
 gain = 0.0001
+last_flightmode = VehicleMode("GUIDED")
+girder_distance_setpoint = 40
 
 try:
 
     while True:
-        sock.sendall(b'Next data.')
+
+        if vehicle.mode == VehicleMode("GUIDED"):
+            flightmode = 1
+        else:
+            flightmode = 0
+        sock.sendall(flightmode.to_bytes(1,'big'))
 
         data = sock.recv(2)
+        girder_distance_bytes = sock.recv(2)
         print('received: ' + str(int.from_bytes(data,"big")))
         center_error = int.from_bytes(data,"big") - 320
+        girder_distance = int.from_bytes(girder_distance_bytes,"big")
+
         print('center_error = ', str(center_error))
+        
+
+        # initialize altitude setpoint
+        current_flightmode = vehicle.mode
+        if current_flightmode == VehicleMode("GUIDED") and last_flightmode != VehicleMode("GUIDED"):
+            girder_distance_setpoint = girder_distance
+        last_flightmode = current_flightmode
+        # 
+        girder_distance_error = girder_distance - girder_distance_setpoint
+        vertical_setpoint = -girder_distance_error * gain
+        if vertical_setpoint < -0.03:
+            vertical_setpoint = -0.03
+        elif vertical_setpoint > 0.03:
+            vertical_setpoint = 0.03
+        elif abs(vertical_setpoint) < 0.01:
+            vertical_setpoint = 0
+
         # if center_error > 15:
         vel_setpoint = -center_error * gain
         if vel_setpoint < -0.1:
@@ -148,8 +175,10 @@ try:
           send_local_ned_velocity(0,vel_setpoint,0)
           print("Moving left(-)/right(+), vel_set = " + str(vel_setpoint))
         elif vel_setpoint == 0:
-          send_local_ned_velocity(0,0,-0.03)
-          print("Drone is moving up.")
+          if girder_distance_setpoint > 400:
+            girder_distance_setpoint = girder_distance_setpoint - 0.03
+            send_local_ned_velocity(0,0,vertical_setpoint)
+            print("Drone is moving vertically.")
         # write log file
         roll_origin = vehicle.attitude.roll
         pitch_origin = vehicle.attitude.pitch 

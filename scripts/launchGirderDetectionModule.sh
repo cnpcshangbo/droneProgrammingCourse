@@ -12,6 +12,6 @@ if [[ "$S1" == "$S2" ]]; then
 	sh ~/code/zed-opencv/test_light_from_ground.sh
 else 
 	echo "working with physical camera."
-	python ~/code/zed-opencv/python/zed-opencv.py
+	python ~/code/zed-opencv/python/zed-opencv.py --ip 0.0.0.0 --port 8000
 fi 
 
