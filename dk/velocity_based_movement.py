@@ -2,7 +2,6 @@
 
 from dronekit import connect, VehicleMode,LocationGlobalRelative,APIException
 import time
-import datetime
 import socket
 
 import sys
@@ -120,11 +119,8 @@ time.sleep(2)
 log_gname='BoTest%s.txt' % (time.time())
 gf = open(log_gname, mode='w')
 gf.write("Guided velocity mode log DATA %s\n"%str(time.localtime()))
-gf.write("time\t \gain\t err\t vel_set\t roll\t pitch\n") #coeffx\t coeffy\t
+gf.write("time\t err\t vel_set\t roll\t pitch\n") #coeffx\t coeffy\t
 gf.close
-
-# Controller parameters
-gain = 0.0001
 
 try:
 
@@ -135,26 +131,32 @@ try:
         print('received: ' + str(int.from_bytes(data,"big")))
         center_error = int.from_bytes(data,"big") - 320
         print('center_error = ', str(center_error))
-        # if center_error > 15:
-        vel_setpoint = -center_error * gain
-        if vel_setpoint < -0.1:
-            vel_setpoint = -0.1
-        elif vel_setpoint > 0.1:
-            vel_setpoint = 0.1
-        elif abs(vel_setpoint) < 0.03:
-            vel_setpoint = 0 
-        
-        if vel_setpoint != 0:
-          send_local_ned_velocity(0,vel_setpoint,0)
-          print("Moving left(-)/right(+), vel_set = " + str(vel_setpoint))
-        elif vel_setpoint == 0:
-          send_local_ned_velocity(0,0,-0.03)
-          print("Drone is moving up.")
+        if center_error > 15:
+            vel_setpoint = -center_error/150
+            if vel_setpoint < -0.2:
+                vel_setpoint = -0.2
+            send_local_ned_velocity(0,vel_setpoint,0)
+            # -0.2<vel_setpoint<-0.1
+            # time.sleep(1)
+            print("Moving Left to front of drone, vel_set="+str(vel_setpoint))
+
+        elif center_error < -15:
+            vel_setpoint = -center_error/150
+            if vel_setpoint > 0.2:
+                vel_setpoint = 0.2   
+            send_local_ned_velocity(0,vel_setpoint,0)
+            # 0.1 < vel_setpoint < 0.2
+            # time.sleep(1)
+            print("Moving Right to front of drone, velocity_set = " + str(vel_setpoint)) 
+        else:
+            vel_setpoint = 0
+            send_local_ned_velocity(0,0,0)
+            print("Drone is under girder.")
         # write log file
         roll_origin = vehicle.attitude.roll
         pitch_origin = vehicle.attitude.pitch 
         gf = open(log_gname, mode='a')
-        gf.write("%s\t%f\t%f\t%f\t%f\t%f\n"%(datetime.datetime.now(),gain,center_error,vel_setpoint,roll_origin,pitch_origin))
+        gf.write("%f\t%f\t%f\t%f\t%f\n"%(time.time(),center_error,vel_setpoint,roll_origin,pitch_origin))
         gf.close()
 finally:
     print('closing socket')
