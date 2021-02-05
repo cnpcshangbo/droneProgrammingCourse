@@ -18,11 +18,12 @@ STRING="Launch girder detection module in ROS node."
 
 xhost +si:localuser:root
 
-docker run -it --rm --name my-first-python-script \
+docker run -it --rm --name rs-zed-container \
 	-v ~/catkin_ws:/root/catkin_ws \
+	-v /home/bo/code/vision_to_mavros:/root/code/vision_to_mavros \
 	--net host --gpus all --runtime nvidia --privileged -e DISPLAY \
 	-v /tmp/.X11-unix:/tmp/.X11-unix --entrypoint="" \
-	cnpcshangbo/ros-zed-dronekit-cv2:v2 \
+	cnpcshangbo/pyrealsense-ros-zed-opencv-dronekit:v2 \
 	bash -c "source devel/setup.bash && cd /root/catkin_ws && source devel/setup.bash && rosrun beginner_tutorials zed-opencv.py"      
 # installed-cv2-root = cnpcshangbo/ros-zed-dronekit-cv2:v1
 # Expected output: 
