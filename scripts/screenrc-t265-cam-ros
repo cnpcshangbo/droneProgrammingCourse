@@ -23,8 +23,8 @@ split -v
 
 screen -t MAVPROXY /bin/bash t1mavproxy-cam.bash
 screen -t Detection bash launchGirderDetectionModuleROS.sh
-# screen -t t265 bash launchT265.bash
-screen -t DroneKit bash launchDroneKitModuleROS.sh
+screen -t t265 bash -c "sleep 5 && source launchT265.bash"
+screen -t DroneKit bash -c "sleep 5 && source launchDroneKitModuleROS.sh"
 # screen -t recordmyscreen bash t4recordmyscreen.bash
 # screen -t deploy4 /usr/bin/ssh
 
