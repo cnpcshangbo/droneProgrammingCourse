@@ -1,0 +1,31 @@
+# the following two lines give a two-line status, with the current window highlighted
+hardstatus alwayslastline
+hardstatus string '%{= kG}[%{G}%H%? %1`%?%{g}][%{w}%l%{g}][%= %{= kw}%-w%{+b yk} %n*%t%?(%u)%? %{-}%+w %=%{g}][%{B}%m/%d %{W}%C%A%{g}]'
+
+# huge scrollback buffer
+defscrollback 5000
+
+# no welcome message
+startup_message off
+
+# 256 colors
+attrcolor b ".I"
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+defbce on
+
+# mouse tracking allows to switch region focus by clicking
+# mousetrack on
+
+split
+split -v
+split -v
+focus down
+split -v
+split -v
+
+screen -t MAVPROXY /bin/bash t1mavproxy-cam.bash
+screen -t t265 bash -c "echo "Waiting MavProxy for 5 seconds..." && sleep 5 && source launchT265.bash"
+# screen -t Detection bash launchGirderDetectionModuleROS.sh
+screen -t zed-ros-wrapper docker exec -it rs-zed-container bash -c "source /opt/ros_ws/devel/setup.bash && source ~/catkin/devel/setup.bash && roslaunch zed_wrapper zed.launch"
+screen -t DroneKit bash -c "sleep 5 && source launchDroneKitModuleROS.sh"
+

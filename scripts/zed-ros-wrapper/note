@@ -1,0 +1,13 @@
+This folder is to prepare the necessary scripts for zed-ros method
+To-do Feb 13:
+* Publish ros topics when girder position is detected:
+** Topic one: /girder-detection/horizontal-error
+** Topic two: /girder-detection/distance
+Learn to publish topic using the ros tutorial talker in beginner tutorial
+issue: How to set the frequency?
+Answer: We don't need to set the frequency, we just publish one topic when detection finishes.
+
+To-do:
+modify the script to run image to:
+add a volumn:
+-v ~/.ssh/rs-zed-container.ssh:~/.ssh
